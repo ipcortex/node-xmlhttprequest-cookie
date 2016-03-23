@@ -34,35 +34,36 @@ module (which in turn is compatible to the API defined by the
 In addition, the exposed `XMLHttpRequest` object also has a 
 `debug` flag for controlling debug messages and there is a `CookieJar` object exposed by the module which
 grants access to the cookie jar:
+```js
+var fs = require("fs");
+var xhrc = require("./xmlhttprequest-cookie");
+var XMLHttpRequest = xhrc.XMLHttpRequest;
+var CookieJar = xhrc.CookieJar;
 
-    var fs = require("fs");
-    var xhrc = require("./xmlhttprequest-cookie");
-    var XMLHttpRequest = xhrc.XMLHttpRequest;
-    var CookieJar = xhrc.CookieJar;
+if (fs.existsSync("./sample.db"))
+    CookieJar.load(fs.readFileSync("./sample.db", { encoding: "utf8" }));
 
-    if (fs.existsSync("./sample.db"))
-        CookieJar.load(fs.readFileSync("./sample.db", { encoding: "utf8" }));
-
-    var get = function (url, complete) {
-        var xhr = new XMLHttpRequest();
-        xhr.debug = true;
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                console.log("body length: " + this.responseText.length);
-                complete(xhr);
-            }
-        };
-        xhr.open("GET", "https://github.com/rse/");
-        xhr.send();
+var get = function (url, complete) {
+    var xhr = new XMLHttpRequest();
+    xhr.debug = true;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            console.log("body length: " + this.responseText.length);
+            complete(xhr);
+        }
     };
+    xhr.open("GET", "https://github.com/rse/");
+    xhr.send();
+};
 
+get("https://github.com/rse/", function (xhr) {
+    console.log("body: " + xhr.responseText.substr(0, 100));
     get("https://github.com/rse/", function (xhr) {
         console.log("body: " + xhr.responseText.substr(0, 100));
-        get("https://github.com/rse/", function (xhr) {
-            console.log("body: " + xhr.responseText.substr(0, 100));
-            fs.writeFileSync("./sample.db", CookieJar.save(), { encoding: "utf8" });
-        });
+        fs.writeFileSync("./sample.db", CookieJar.save(), { encoding: "utf8" });
     });
+});
+```
 
 See Also
 --------
