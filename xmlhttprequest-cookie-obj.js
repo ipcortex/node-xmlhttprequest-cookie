@@ -86,7 +86,7 @@ Cookie.build = function (cookieString, url) {
 
     /*  parse value/name  */
     var equalsSplit = /([^=]+)(?:=(.*))?/;
-    var cookieParams = ("" + cookieString).split("; ");
+    var cookieParams = ("" + cookieString).split(/;\s*/);
     var cookieParam;
     if ((cookieParam = cookieParams.shift().match(equalsSplit)) === null)
         throw new Error("failed to parse cookie string");
